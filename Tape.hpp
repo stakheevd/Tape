@@ -4,9 +4,13 @@
 #include <fstream>
 #include <string>
 #include <list>
+#include <queue>
 #include <iostream>
 #include <memory>
 #include <algorithm>
+#include <cmath>
+
+using Node = std::pair<int, int>;
 
 struct Configuration
 {
@@ -25,13 +29,23 @@ struct Configuration
   int UPPER_LIMIT_INDEX;
 };
 
+struct Compare
+{
+  bool operator() (Node& first_node, Node& second_node)
+  {
+    return first_node.first >= second_node.first;
+  }
+};
+
 class Tape
 {
 public:
-  Tape(std::ifstream& input_stream, std::ofstream& output_stream, Configuration* conf) noexcept;
+  Tape(std::fstream& input_stream, std::ofstream& output_stream, Configuration* conf) noexcept;
 
   void init_runs();
   void merge_files();
+
+  void read_data(unsigned int pow);
 
   Tape(const Tape& other_tape) = delete;
   Tape(Tape&& other_tape) = delete;
@@ -41,15 +55,19 @@ public:
   Tape& operator=(const Tape& other_tape) = delete;
   Tape& operator=(Tape&& other_tape) = delete;
 
+  unsigned int power;
+
 private:
   std::list<int> tape;
   std::unique_ptr<Configuration> configuration_ptr;
 
-  std::ifstream in_stream;
+  std::fstream in_stream;
   std::ofstream out_stream;
+
 
   unsigned int number_of_element;
   unsigned int current_index;
+  unsigned int chunk_counter;
 
   void read_block();
 };

@@ -18,7 +18,7 @@ int main()
     return -1;
   }
 
-  std::ifstream input_file;
+  std::fstream input_file;
   input_file.open(input_file_name);
 
   if (!input_file.is_open())
@@ -42,14 +42,8 @@ int main()
 
   Tape tape(input_file, output_file, new Configuration(memory_limit, 3, 100, -1, -1));
 
-  tape.init_runs();
-
-  // Алгоритм: - УСТАРЕЛ, неэффективен по времени исполнения
-  // Идём по M/2 - одну m/2 берём из входного файла, другую m/2
-  // из выходного, в итоге получаем M
-  // сравниваем обе m/2 - если в m/2 из входного файла нашлось меньшее число,
-  // то меняем его местами со сравниваемым числом из m/2 выходного файла
-  // когда пробежали весь выходной файл, записываем оставшуюся m/2 в конец
+  //tape.init_runs();
+  tape.read_data(tape.power);
 
   return 0;
 }
