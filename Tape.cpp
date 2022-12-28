@@ -3,39 +3,23 @@
 Tape::Tape(std::fstream& data_stream, Configuration* conf) :
   configuration_ptr(conf),
   stream(std::move(data_stream)),
-  power(0)
+  power(0),
+  temp_value(0),
+  next_temp_value(0),
+  first_tape_index(0),
+  second_tape_index(0)
 {
 }
 
 void Tape::series_sort(unsigned int pow)
 {
-  int next_temp_value = 0;
-  int temp_value = 0;
-  bool is_sorted = true;
+  temp_value = 0;
+  next_temp_value = 0;
 
   stream.clear();
   stream.seekp(stream.beg);
 
-  stream >> temp_value;
-  simulate_latency(configuration_ptr->LATENCY);
-
-  if ((pow == 0) && (!stream.eof()) && (!stream.good()))
-    std::cerr << "Error: Invalid input data\n";
-
-  while (stream >> next_temp_value)
-  {
-    simulate_latency(configuration_ptr->LATENCY);
-
-    if (next_temp_value < temp_value)
-    {
-      is_sorted = false;
-      break;
-    }
-
-    temp_value = next_temp_value;
-  }
-
-  if (is_sorted)
+  if (is_sorted(temp_value, next_temp_value))
     return;
   
   stream.clear();
@@ -44,8 +28,8 @@ void Tape::series_sort(unsigned int pow)
   std::fstream first_tape_stream("/tmp/first_tape", std::ios::out | std::ios::in | std::ios::trunc);
   std::fstream second_tape_stream("/tmp/second_tape", std::ios::out | std::ios::in | std::ios::trunc);
 
-  unsigned int first_tape_index = 0;
-  unsigned int second_tape_index = 0;
+  first_tape_index = 0;
+  second_tape_index = 0;
 
   while (stream.good())
   {
@@ -189,6 +173,27 @@ void Tape::series_sort(unsigned int pow)
 void Tape::simulate_latency(unsigned int ms)
 {
   std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+}
+
+bool Tape::is_sorted(int& temp_value, int& next_temp_value)
+{
+  stream >> temp_value;
+  simulate_latency(configuration_ptr->LATENCY);
+
+  if ((power == 0) && (!stream.eof()) && (!stream.good()))
+    std::cerr << "Error: Invalid input data\n";
+
+  while (stream >> next_temp_value)
+  {
+    simulate_latency(configuration_ptr->LATENCY);
+
+    if (next_temp_value < temp_value)
+      return false;
+
+    temp_value = next_temp_value;
+  }
+
+  return true;
 }
 
 Tape::~Tape()

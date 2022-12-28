@@ -10,7 +10,7 @@
 
 struct Configuration
 {
-  Configuration(unsigned int lat = 0) noexcept : 
+  Configuration(int lat = 0) noexcept : 
     LATENCY(lat)
   {} 
 
@@ -32,11 +32,17 @@ public:
   
   void series_sort(unsigned int pow = 0);
   void simulate_latency(unsigned int msec = 0);
+  bool is_sorted(int& temp_value, int& next_temp_value);
 
 private:
   std::unique_ptr<Configuration> configuration_ptr;
   std::fstream stream;
+
   unsigned int power;
+  int temp_value;
+  int next_temp_value;
+  unsigned int first_tape_index;
+  unsigned int second_tape_index;
 };
 
 #endif
