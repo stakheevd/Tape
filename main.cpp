@@ -1,49 +1,62 @@
+#include <iostream>
+#include <string>
+
 #include "Tape.hpp"
 
-int main()
+int main(int argc, char* argv[])
 {
-  // From argv
-  std::string input_file_name = "inpf.txt";
-  std::string output_file_name = "ou.txt";
-
-  if (input_file_name.empty())
+  if (argc < 2)
   {
-    std::cerr << "Incorrect name of input file\n";
-    return -1;
+    std::cerr << "Usage: ./main [file_name]\n"; 
+    return 1;
   }
 
-  if (output_file_name.empty())
+  std::string file_name = argv[1];
+
+  if (file_name.empty())
   {
-    std::cerr << "Incorrect name of output file\n";
-    return -1;
+    std::cerr << "Incorrect name of file\n";
+    return 1;
   }
 
-  std::fstream input_file;
-  input_file.open(input_file_name);
-
+  std::fstream input_file(file_name);
   if (!input_file.is_open())
   {
-    std::cerr << "Input file not found\n";
-    return -1;
+    std::cerr << "File " << file_name << " not found\n";
+    return 1;
   }
 
-  std::ofstream output_file;
-  output_file.open(output_file_name);
+  unsigned int latency = 0;
 
-  std::ifstream config_file;
-  config_file.open("config.txt");
-
-  if (config_file.is_open())
+  std::ifstream config_stream("config.txt");
+  if (config_stream.is_open())
   {
-    // Read config here
+    config_stream >> latency;
+
+    if (!config_stream.good())
+    {
+      std::cerr << "Error: latency is a positive number\n";
+      return 1;
+    }
   }
+  else
+  {
+    std::cerr << "Config file (config.txt) not found\n";
+    return 1;
+  }
+  config_stream.close();
 
-  unsigned int memory_limit = 5;
+  Tape tape(input_file, new Configuration(latency));
+  
+  auto start = std::chrono::high_resolution_clock::now();
 
-  Tape tape(input_file, output_file, new Configuration(memory_limit, 3, 100, -1, -1));
+  tape.series_sort();
 
-  //tape.init_runs();
-  tape.read_data(tape.power);
+  auto end = std::chrono::high_resolution_clock::now();
 
+  std::cout << "Result is saved in " << file_name << '\n'
+            << "Elapsed time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()
+            << " ms.\n";
+  
   return 0;
 }
