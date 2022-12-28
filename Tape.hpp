@@ -10,17 +10,17 @@
 
 struct Configuration
 {
-  Configuration(unsigned int lat = 0) : 
+  Configuration(unsigned int lat = 0) noexcept : 
     LATENCY(lat)
   {} 
 
-  unsigned int LATENCY;
+  const unsigned int LATENCY;
 };
 
 class Tape
 {
 public:
-  Tape(std::fstream& data_stream, Configuration* conf) noexcept;
+  Tape(std::fstream& data_stream, Configuration* conf);
 
   Tape(const Tape& other_tape) = delete;
   Tape(Tape&& other_tape) = delete;

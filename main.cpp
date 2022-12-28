@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
   {
     config_stream >> latency;
 
-    if ((!config_stream.good()) || (latency < 0))
+    if (latency < 0)
     {
       std::cerr << "Error: Latency is a positive number\n";
       return 1;

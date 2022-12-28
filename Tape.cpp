@@ -1,6 +1,6 @@
 #include "Tape.hpp"
 
-Tape::Tape(std::fstream& data_stream, Configuration* conf) noexcept :
+Tape::Tape(std::fstream& data_stream, Configuration* conf) :
   configuration_ptr(conf),
   stream(std::move(data_stream)),
   power(0)
