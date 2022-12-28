@@ -19,6 +19,9 @@ void Tape::series_sort(unsigned int pow)
   stream >> temp_value;
   simulate_latency(configuration_ptr->LATENCY);
 
+  if ((pow == 0) && (!stream.eof()) && (!stream.good()))
+    std::cerr << "Error: Invalid input data\n";
+
   while (stream >> next_temp_value)
   {
     simulate_latency(configuration_ptr->LATENCY);
@@ -78,6 +81,9 @@ void Tape::series_sort(unsigned int pow)
       }
     }
   }
+
+  if ((pow == 0) && (!stream.eof()) && (!stream.good()))
+    std::cerr << "Error: Invalid input data\n";
 
   std::flush(first_tape_stream);
   std::flush(second_tape_stream);

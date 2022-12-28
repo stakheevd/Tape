@@ -15,33 +15,33 @@ int main(int argc, char* argv[])
 
   if (file_name.empty())
   {
-    std::cerr << "Incorrect name of file\n";
+    std::cerr << "Error: Incorrect name of file\n";
     return 1;
   }
 
   std::fstream input_file(file_name);
   if (!input_file.is_open())
   {
-    std::cerr << "File " << file_name << " not found\n";
+    std::cerr << "Error: File " << file_name << " not found\n";
     return 1;
   }
 
-  unsigned int latency = 0;
+  int latency = 0;
 
   std::ifstream config_stream("config.txt");
   if (config_stream.is_open())
   {
     config_stream >> latency;
 
-    if (!config_stream.good())
+    if ((!config_stream.good()) || (latency < 0))
     {
-      std::cerr << "Error: latency is a positive number\n";
+      std::cerr << "Error: Latency is a positive number\n";
       return 1;
     }
   }
   else
   {
-    std::cerr << "Config file (config.txt) not found\n";
+    std::cerr << "Error: Config file (config.txt) not found\n";
     return 1;
   }
   config_stream.close();

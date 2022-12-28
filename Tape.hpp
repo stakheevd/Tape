@@ -2,6 +2,7 @@
 #define TAPE_HPP
 
 #include <fstream>
+#include <iostream>
 #include <memory>
 #include <cmath>
 #include <chrono>
